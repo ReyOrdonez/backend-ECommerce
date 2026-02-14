@@ -4,12 +4,18 @@ import bcrypt from "bcrypt";
 //types
 import type { UpdateUserInput } from "../Schemas/user.schemas";
 
+//Error classes
+import {
+  NotFoundError,
+  BadRequestError,
+  AlreadyExistsError,
+} from "../errors/errors.classes";
+
 //Get all users function
 export const getUsersService = async () => {
   const users = await prisma.user.findMany({
     select: { id: true, username: true, email: true },
   });
-
   return users;
 };
 
@@ -19,9 +25,7 @@ export const getUserByIdService = async (id: number) => {
     where: { id },
     select: { id: true, username: true, email: true },
   });
-  if (!user) {
-    throw new Error("User not found");
-  }
+  if (!user) throw new NotFoundError("User not found");
   return user;
 };
 
@@ -32,10 +36,11 @@ export const createUserService = async (data: {
   password: string;
 }) => {
   const userExists = await prisma.user.findUnique({
+    //We use findUnique here because email is unique in the database
     where: { email: data.email },
   });
   if (userExists) {
-    throw new Error("This email already exists");
+    throw new AlreadyExistsError("This email already exists");
   }
   const hashedPassword = await bcrypt.hash(data.password, 8);
   return prisma.user.create({
@@ -50,7 +55,7 @@ export const removeUserService = async (id: number) => {
     where: { id },
   });
   if (!userExists) {
-    throw new Error("User not found");
+    throw new NotFoundError("User not found");
   }
   //return deleted user
   const userToDelete = await prisma.user.delete({
@@ -64,10 +69,14 @@ export const updateUserService = async (id: number, data: UpdateUserInput) => {
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 8);
   }
-  const updatedUser = await prisma.user.update({
-    where: { id },
-    data: data as Parameters<typeof prisma.user.update>[0]["data"],
-    select: { id: true, username: true },
-  });
+  const updatedUser = await prisma.user
+    .update({
+      where: { id },
+      data: data as Parameters<typeof prisma.user.update>[0]["data"],
+      select: { id: true, username: true },
+    })
+    .catch(() => {
+      throw new NotFoundError("User not found");
+    });
   return updatedUser;
 };
