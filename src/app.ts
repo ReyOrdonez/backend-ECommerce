@@ -3,10 +3,10 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import productsRoutes from "./routes/products.routes";
-import categoriesRoutes from "./routes/categories.routes";
-import usersRoutes from "./routes/users.routes";
-import { AppError } from "./errors/errors.classes";
+import productsRoutes from "./routes/products.routes.js";
+import categoriesRoutes from "./routes/categories.routes.js";
+import usersRoutes from "./routes/users.routes.js";
+import { AppError } from "./errors/errors.classes.js";
 
 const app = express();
 app.use(express.json());

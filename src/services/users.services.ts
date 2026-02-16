@@ -1,15 +1,15 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 
 //types
-import type { UpdateUserInput } from "../Schemas/user.schemas";
+import type { UpdateUserInput } from "../Schemas/user.schemas.js";
 
 //Error classes
 import {
   NotFoundError,
   BadRequestError,
   AlreadyExistsError,
-} from "../errors/errors.classes";
+} from "../errors/errors.classes.js";
 
 //Get all users function
 export const getUsersService = async () => {

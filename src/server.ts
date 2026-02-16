@@ -1,4 +1,4 @@
-import app from "./app";
+import app from "./app.js";
 import pc from "picocolors";
 
 const PORT = 3000;

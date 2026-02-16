@@ -5,14 +5,14 @@ import {
   getUserByIdService,
   removeUserService,
   updateUserService,
-} from "../services/users.services";
+} from "../services/users.services.js";
 
 //Zod schemas
 import {
   createUserInput,
   userOutput,
   updateUserInput,
-} from "../Schemas/user.schemas";
+} from "../Schemas/user.schemas.js";
 
 //Get all users
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
