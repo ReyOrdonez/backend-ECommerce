@@ -1,11 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import {
-  getUsersService,
-  createUserService,
-  getUserByIdService,
-  removeUserService,
-  updateUserService,
-} from "../services/users.services.js";
+import { userServices } from "../services/users.services.js";
 
 //Zod schemas
 import {
@@ -14,10 +8,16 @@ import {
   updateUserInput,
 } from "../Schemas/user.schemas.js";
 
+//prismaClient
+import { prisma } from "../lib/prisma.js";
+
+//inicialize userServices
+const userServicesModule = userServices(prisma);
+
 //Get all users
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await getUsersService();
+    const users = await userServicesModule.getUsersService();
     res.status(200).json(users);
   } catch (error) {
     next(error);
@@ -28,7 +28,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 const getById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const user = await getUserByIdService(Number(id));
+    const user = await userServicesModule.getUserByIdService(Number(id));
     const result = userOutput.parse(user); //validate output with zod schema before sending response
     return res.status(200).json(result);
   } catch (error) {
@@ -40,7 +40,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, email, password } = createUserInput.parse(req.body);
-    const newUser = await createUserService({
+    const newUser = await userServicesModule.createUserService({
       username,
       email,
       password,
@@ -55,7 +55,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 const remove = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const deletedUser = await removeUserService(Number(id));
+    const deletedUser = await userServicesModule.removeUserService(Number(id));
     const result = userOutput.parse(deletedUser); //validate output with zod schema before sending response
     return res.status(200).json(`User ${result} successfully deleted`);
   } catch (error) {
@@ -68,7 +68,10 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const data = updateUserInput.parse(req.body);
-    const updatedUser = await updateUserService(Number(id), data);
+    const updatedUser = await userServicesModule.updateUserService(
+      Number(id),
+      data,
+    );
     const result = userOutput.parse(updatedUser); //validate output with zod schema before sending response
     return res.status(200).json(result);
   } catch (error) {
