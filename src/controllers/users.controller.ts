@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import type { NextFunction, Request, Response } from "express";
 import { userServices } from "../services/users.services.js";
 
@@ -12,7 +13,7 @@ import {
 import { prisma } from "../lib/prisma.js";
 
 //inicialize userServices
-const userServicesModule = userServices(prisma);
+const userServicesModule = userServices(prisma, bcrypt);
 
 //Get all users
 const getAll = async (req: Request, res: Response, next: NextFunction) => {

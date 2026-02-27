@@ -1,13 +1,14 @@
-import bcrypt from "bcrypt";
 import { PrismaClient } from "../../prisma/generated/client.js";
+import bcrypt from "bcrypt";
 
 //types
 import type { UpdateUserInput } from "../Schemas/user.schemas.js";
+type BcryptType = typeof bcrypt;
 
 //Error classes
 import { NotFoundError, AlreadyExistsError } from "../errors/errors.classes.js";
 
-export const userServices = (prisma: PrismaClient) => {
+export const userServices = (prisma: PrismaClient, bcrypt: BcryptType) => {
   return {
     //Get all users function
     async getUsersService() {
