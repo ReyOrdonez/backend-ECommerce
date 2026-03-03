@@ -1,14 +1,14 @@
 # E-Commerce Backend API (User & Authentication Module)
 
-Backend API desarrollada con arquitectura en capas, enfocada en separación de responsabilidades, testabilidad.
+Backend API developed using a layered architecture, focused on separation of responsibilities and testability.
 
-Implementa un módulo completo de gestión de usuarios y autenticación basada en verificación segura de credenciales, utilizando TypeScript y Prisma ORM sobre PostgreSQL.
+Implements a complete user management and authentication module based on secure credential verification, built with TypeScript and Prisma ORM on top of PostgreSQL.
 
 ---
 
-## Arquitectura
+## Architecture
 
-La aplicación sigue un enfoque modular basado en MVC + capa de servicios:
+The application follows a modular approach based on MVC + service layer:
 
 server/
 app/
@@ -17,13 +17,13 @@ controllers/
 services/
 middlewares/
 
-### Principios
+### Principles
 
-- Controllers (manejo exclusivo de request/response)
-- Lógica de negocio en services
-- Inyección manual de dependencias (Prisma y bcrypt)
-- Manejo centralizado de errores mediante middleware global
-- Clases de error personalizadas extendiendo `Error`
+- Controllers (handle request/response exclusively)
+- Business logic isolated in services
+- Manual dependency injection (Prisma and bcrypt)
+- Centralized error handling through a global middleware
+- Custom error classes extending `Error`
 
 ---
 
@@ -34,74 +34,74 @@ middlewares/
 - TypeScript
 - Prisma ORM
 - PostgreSQL
-- Zod (validación de datos)
-- Bcrypt (hashing de contraseñas)
+- Zod (data validation)
+- Bcrypt (password hashing)
 - Vitest (testing)
 
-Infraestructura:
+Infrastructure:
 
-- Deploy en Railway
-- Base de datos en Neon
-
----
-
-## Seguridad y Autenticación
-
-- Hashing seguro de contraseñas con bcrypt
-- Verificación segura con `compare()`
-- Validación estructurada con Zod
-- Restricción de email único
-- Exclusión del campo `password` en todas las respuestas (uso de `select` en Prisma)
-
-El login valida credenciales correctamente y está preparado para evolucionar hacia autenticación basada en JWT.
+- Deployment on Railway
+- Database hosted on Neon
 
 ---
 
-## Funcionalidades Implementadas
+## Security and Authentication
+
+- Secure password hashing with bcrypt
+- Safe credential verification using `compare()`
+- Structured validation with Zod
+- Unique email constraint
+- Explicit exclusion of the `password` field in all responses (using Prisma `select`)
+
+The login endpoint properly validates credentials and is prepared to evolve into JWT-based authentication.
+
+---
+
+## Implemented Features
 
 ### Users CRUD
 
-- Crear usuario
-- Obtener todos los usuarios
-- Obtener usuario por ID
-- Actualizar usuario
-- Eliminar usuario
+- Create user
+- Get all users
+- Get user by ID
+- Update user
+- Delete user
 
 ### Login
 
-- Validación de credenciales
-- Respuesta sin exposición de datos sensibles
+- Credential validation
+- Response without exposing sensitive data
 
 ---
 
 ## Testing
 
-Testing enfocado en la capa de servicios usando Vitest.
+Testing is focused on the service layer using Vitest.
 
-Se incluyen:
+Includes:
 
-- Casos positivos
-- Casos negativos
-- Verificación de lanzamiento de errores personalizados
+- Positive cases
+- Negative cases
+- Verification of custom error throwing
 
-La lógica de negocio está completamente testeada de forma aislada gracias al desacoplamiento de dependencias.
-
----
-
-## Deploy
-
-El proyecto está desplegado y listo para producción:
-
-- Backend en Railway
-- Base de datos PostgreSQL en Neon
-- Variables de entorno configurables
-- Seed ejecutable mediante Prisma para inicializar usuario administrador
+Business logic is fully tested in isolation thanks to dependency decoupling.
 
 ---
 
-## Instalación y Uso
+## Deployment
 
-### Clonar repositorio
+The project is deployed and production-ready:
+
+- Backend hosted on Railway
+- PostgreSQL database on Neon
+- Configurable environment variables
+- Prisma seed script to initialize an admin user
+
+---
+
+## Installation and Usage
+
+### Clone repository
 
 ```bash
 git clone https://github.com/ReyOrdonez/backend-ECommerce.git
