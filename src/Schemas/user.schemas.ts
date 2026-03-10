@@ -27,4 +27,9 @@ export const updateUserInput = createUserInput
     Object.values(object).some((value) => value !== undefined),
   );
 
+export const userLogin = z.object({
+  email: z.email(),
+  password: z.string().min(6).max(15),
+});
+
 export type UpdateUserInput = z.infer<typeof updateUserInput>;
