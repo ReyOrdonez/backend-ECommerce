@@ -1,5 +1,5 @@
 import { PrismaClient } from "../../prisma/generated/client.js";
-import { IncorrectPassword, NotFoundError } from "../errors/errors.classes.js";
+import { IncorrectPasswordOrEmail } from "../errors/errors.classes.js";
 import jwt from "jsonwebtoken";
 
 import bcrypt from "bcrypt";
@@ -17,16 +17,20 @@ export const authService = (
         where: { email: email },
       });
       if (!user) {
-        throw new NotFoundError("User Not Found");
+        throw new IncorrectPasswordOrEmail();
       }
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
-        throw new IncorrectPassword();
+        throw new IncorrectPasswordOrEmail();
       }
       const secret = process.env.SECRET_JWT_KEY;
+      const duration = process.env.COOKIE_EXPIRATION;
 
       if (!secret) {
         throw new Error("SECRET_JWT_KEY is undefined");
+      }
+      if (!duration) {
+        throw new Error("COOKIE_EXPIRATION is undefined");
       }
       const token = JWT.sign(
         {
@@ -36,7 +40,7 @@ export const authService = (
         },
         secret,
         {
-          expiresIn: "1h",
+          expiresIn: duration as any,
         },
       );
       return {
