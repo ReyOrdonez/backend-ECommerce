@@ -7,13 +7,17 @@ import productsRoutes from "./routes/products.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
 import usersRoutes from "./routes/users.routes.js";
 import { AppError } from "./errors/errors.classes.js";
+import authRout from "./routes/auth.routes.js";
+import cookieParser from "cookie-parser";
+import verifyToken from "./middlewares/tokenVerification.middleware.js";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
-app.get("/api", (req: Request, res: Response) => {
-  res.status(200).json({ message: "API is running" });
-});
+app.use("/api/login", authRout);
+
+app.use("/api", verifyToken);
 
 app.use("/api/products", productsRoutes);
 
