@@ -3,8 +3,11 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import productsRoutes from "./routes/products.routes.js";
-import categoriesRoutes from "./routes/categories.routes.js";
+import {
+  publicProductsRouter,
+  privateProductsRouter,
+} from "./routes/products.routes.js";
+import privateCategoriesRoutes from "./routes/categories.routes.js";
 import {
   publicUsersRouter,
   privateUsersRouter,
@@ -21,14 +24,15 @@ app.use(cookieParser());
 
 // Public routes
 app.use("/api/login", authRout);
-app.use("/api/products", productsRoutes);
+app.use("/api/products", publicProductsRouter);
 app.use("/api/users", publicUsersRouter);
 
 // Auth middleware — everything below is protected
 app.use("/api", verifyToken);
 
 // Private routes
-app.use("/api/categories", categoriesRoutes);
+app.use("/api/products", privateProductsRouter);
+app.use("/api/categories", privateCategoriesRoutes);
 app.use("/api/users", privateUsersRouter);
 
 //ERROR HANDLER

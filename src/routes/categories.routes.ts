@@ -1,9 +1,12 @@
-import { Router, type Request, type Response } from "express";
+import { Router } from "express";
+import categoriesController from "../controllers/categories.controller.js";
 
-const router = Router();
+const privateCategoriesRouter = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.status(200).json("List of categories");
-});
+privateCategoriesRouter.get("/", categoriesController.getAll);
+privateCategoriesRouter.get("/:id", categoriesController.getById);
+privateCategoriesRouter.post("/", categoriesController.create);
+privateCategoriesRouter.patch("/:id", categoriesController.update);
+privateCategoriesRouter.delete("/:id", categoriesController.remove);
 
-export default router;
+export default privateCategoriesRouter;

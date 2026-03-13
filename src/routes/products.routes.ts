@@ -1,9 +1,13 @@
-import { Router, type Request, type Response } from "express";
+import { Router } from "express";
+import productsController from "../controllers/products.controller.js";
 
-const router = Router();
+export const publicProductsRouter = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.status(200).json("List of products");
-});
+publicProductsRouter.get("/", productsController.getAll);
+publicProductsRouter.get("/:id", productsController.getById);
 
-export default router;
+export const privateProductsRouter = Router();
+
+privateProductsRouter.post("/", productsController.create);
+privateProductsRouter.patch("/:id", productsController.update);
+privateProductsRouter.delete("/:id", productsController.remove);
