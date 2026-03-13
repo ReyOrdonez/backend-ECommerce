@@ -5,8 +5,12 @@ import express, {
 } from "express";
 import productsRoutes from "./routes/products.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
-import usersRoutes from "./routes/users.routes.js";
+import {
+  publicUsersRouter,
+  privateUsersRouter,
+} from "./routes/users.routes.js";
 import { AppError } from "./errors/errors.classes.js";
+import { ZodError } from "zod";
 import authRout from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import verifyToken from "./middlewares/tokenVerification.middleware.js";
@@ -15,15 +19,17 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Public routes
 app.use("/api/login", authRout);
+app.use("/api/products", productsRoutes);
+app.use("/api/users", publicUsersRouter);
 
+// Auth middleware — everything below is protected
 app.use("/api", verifyToken);
 
-app.use("/api/products", productsRoutes);
-
+// Private routes
 app.use("/api/categories", categoriesRoutes);
-
-app.use("/api/users", usersRoutes);
+app.use("/api/users", privateUsersRouter);
 
 //ERROR HANDLER
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -35,10 +41,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  if (err.name === "ZodError") {
+  if (err instanceof ZodError) {
     return res.status(400).json({
       message: "Validation error",
-      errors: err.errors,
+      errors: err.issues.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      })),
     });
   }
 
