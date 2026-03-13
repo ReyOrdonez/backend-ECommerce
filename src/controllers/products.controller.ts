@@ -4,7 +4,7 @@ import {
   createProductInput,
   updateProductInput,
   productOutput,
-} from "../Schemas/product.schemas.js";
+} from "../schemas/product.schemas.js";
 import { prisma } from "../lib/prisma.js";
 
 const productServicesModule = productServices(prisma);

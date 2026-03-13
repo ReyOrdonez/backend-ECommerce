@@ -2,7 +2,7 @@ import { PrismaClient } from "../../prisma/generated/client.js";
 import bcrypt from "bcrypt";
 
 //types
-import type { UpdateUserInput } from "../Schemas/user.schemas.js";
+import type { UpdateUserInput } from "../schemas/user.schemas.js";
 type BcryptType = typeof bcrypt;
 
 //Error classes

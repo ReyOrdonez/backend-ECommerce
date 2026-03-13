@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 //zod schema
-import { userLogin } from "../Schemas/user.schemas.js";
+import { userLogin } from "../schemas/user.schemas.js";
 
 //service
 import { authService } from "../services/auth.services.js";

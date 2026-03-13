@@ -1,6 +1,6 @@
 import { expect, test, describe, vi } from "vitest";
-import { userServices } from "../services/users.services.js";
-import { NotFoundError, AlreadyExistsError } from "../errors/errors.classes.js";
+import { userServices } from "../src/services/users.services.js";
+import { NotFoundError, AlreadyExistsError } from "../src/errors/errors.classes.js";
 
 //FAKE USER DATA
 const fakeUser = {

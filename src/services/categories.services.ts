@@ -2,7 +2,7 @@ import { PrismaClient } from "../../prisma/generated/client.js";
 import type {
   CreateCategoryInput,
   UpdateCategoryInput,
-} from "../Schemas/category.schemas.js";
+} from "../schemas/category.schemas.js";
 
 export const categoryServices = (prisma: PrismaClient) => {
   return {

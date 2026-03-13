@@ -2,7 +2,7 @@ import { PrismaClient } from "../../prisma/generated/client.js";
 import type {
   CreateProductInput,
   UpdateProductInput,
-} from "../Schemas/product.schemas.js";
+} from "../schemas/product.schemas.js";
 
 export const productServices = (prisma: PrismaClient) => {
   return {

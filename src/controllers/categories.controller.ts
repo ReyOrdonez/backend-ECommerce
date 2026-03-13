@@ -4,7 +4,7 @@ import {
   createCategoryInput,
   updateCategoryInput,
   categoryOutput,
-} from "../Schemas/category.schemas.js";
+} from "../schemas/category.schemas.js";
 import { prisma } from "../lib/prisma.js";
 
 const categoryServicesModule = categoryServices(prisma);

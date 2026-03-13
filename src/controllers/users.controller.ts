@@ -7,7 +7,7 @@ import {
   createUserInput,
   userOutput,
   updateUserInput,
-} from "../Schemas/user.schemas.js";
+} from "../schemas/user.schemas.js";
 
 //prismaClient
 import { prisma } from "../lib/prisma.js";
