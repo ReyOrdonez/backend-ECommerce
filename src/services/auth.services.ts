@@ -24,13 +24,10 @@ export const authService = (
         throw new IncorrectPasswordOrEmail();
       }
       const secret = process.env.SECRET_JWT_KEY;
-      const duration = process.env.COOKIE_EXPIRATION;
+      const duration = process.env.TOKEN_EXPIRATION || "1h";
 
       if (!secret) {
         throw new Error("SECRET_JWT_KEY is undefined");
-      }
-      if (!duration) {
-        throw new Error("COOKIE_EXPIRATION is undefined");
       }
       const token = JWT.sign(
         {

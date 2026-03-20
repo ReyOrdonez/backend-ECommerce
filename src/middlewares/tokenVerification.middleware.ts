@@ -17,7 +17,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
     return next();
   } catch (error) {
-    res.status(401).json({ mensaje: "Token inválido" });
+    res.status(401).json({ mensaje: "Unauthorized" });
   }
 };
 

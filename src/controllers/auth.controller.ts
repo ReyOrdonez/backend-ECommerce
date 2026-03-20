@@ -17,12 +17,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = userLogin.parse(req.body);
     const result = await authServicesModule.login(email, password);
+    const maxAge = Number(process.env.COOKIE_MAX_AGE) || 1000 * 60 * 60;
     res
       .status(200)
       .cookie("access_token", result.token, {
         httpOnly: true,
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60, //1 hour
+        maxAge: maxAge, //1 hour
       })
       .json({
         id: result.id,
