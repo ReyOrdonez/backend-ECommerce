@@ -107,3 +107,33 @@ The project is deployed and production-ready:
 git clone https://github.com/ReyOrdonez/backend-ECommerce.git
 
 ```
+
+### Install dependencies
+
+npm install
+
+### Enviroment configuration
+
+copy the .env.example file and set your local credentials (dataBaseUrl, secret key, etc)
+
+### Database setup
+
+run the migrations to create tables in your database
+
+npx prisma migrate dev --name init
+npx prisma db seed
+
+### Run your project
+
+# Development mode
+
+npm run dev
+
+# Production build
+
+npm run build
+npm start
+
+# Testing
+
+npm test
