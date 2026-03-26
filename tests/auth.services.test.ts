@@ -87,4 +87,69 @@ describe("auth services", () => {
 
     expect(fakeJWT.sign).not.toHaveBeenCalled();
   });
+
+  test("login throws Error when SECRET_JWT_KEY is not defined", async () => {
+    delete process.env.SECRET_JWT_KEY;
+
+    const fakePrisma = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: 1,
+          username: "fakeuser",
+          email: "fakeuser@example.com",
+          password: "hashedpassword",
+          role: "USER",
+        }),
+      },
+    };
+    const fakeBcrypt = {
+      compare: vi.fn().mockResolvedValue(true),
+    };
+    const fakeJWT = { sign: vi.fn() };
+
+    await expect(
+      authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
+        "fakeuser@example.com",
+        "fakepassword",
+      ),
+    ).rejects.toThrow("SECRET_JWT_KEY is undefined");
+
+    expect(fakeJWT.sign).not.toHaveBeenCalled();
+  });
+
+  test("login uses TOKEN_EXPIRATION env var when defined", async () => {
+    process.env.TOKEN_EXPIRATION = "2h";
+
+    const fakePrisma = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: 1,
+          username: "fakeuser",
+          email: "fakeuser@example.com",
+          password: "hashedpassword",
+          role: "USER",
+        }),
+      },
+    };
+    const fakeBcrypt = {
+      compare: vi.fn().mockResolvedValue(true),
+    };
+    const fakeJWT = {
+      sign: vi.fn().mockReturnValue("fakeToken"),
+    };
+
+    await authService(
+      fakePrisma as any,
+      fakeBcrypt as any,
+      fakeJWT as any,
+    ).login("fakeuser@example.com", "fakepassword");
+
+    expect(fakeJWT.sign).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ expiresIn: "2h" }),
+    );
+
+    delete process.env.TOKEN_EXPIRATION;
+  });
 });
