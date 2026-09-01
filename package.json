@@ -10,14 +10,15 @@
     "start": "node dist/src/server.js",
     "deploy": "prisma migrate deploy && npm run build",
     "docker:start": "sleep 5 && prisma migrate deploy && npm run build && npm start",
-    "seed": "npx prisma db seed"
+    "seed": "npx prisma db seed",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "10.0.1",
+    "@eslint/js": "^10.0.1",
     "@types/bcrypt": "6.0.0",
     "@types/better-sqlite3": "7.6.13",
     "@types/cookie-parser": "1.4.10",
@@ -26,11 +27,13 @@
     "@types/node": "25.2.1",
     "@typescript-eslint/eslint-plugin": "8.56.1",
     "@typescript-eslint/parser": "8.56.1",
-    "eslint": "10.0.2",
+    "eslint": "^10.9.1",
+    "globals": "^17.12.0",
+    "jiti": "^2.7.0",
     "prisma": "7.3.0",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.56.1",
+    "typescript-eslint": "^8.69.0",
     "vitest": "4.0.18"
   },
   "dependencies": {
