@@ -152,4 +152,60 @@ describe("auth services", () => {
 
     delete process.env.TOKEN_EXPIRATION;
   });
+
+  test("login defaults TOKEN_EXPIRATION to '1h' when env var is not set", async () => {
+    delete process.env.TOKEN_EXPIRATION;
+
+    const fakePrisma = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: 1,
+          username: "fakeuser",
+          email: "fakeuser@example.com",
+          password: "hashedpassword",
+          role: "USER",
+        }),
+      },
+    };
+    const fakeBcrypt = { compare: vi.fn().mockResolvedValue(true) };
+    const fakeJWT = { sign: vi.fn().mockReturnValue("fakeToken") };
+
+    await authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
+      "fakeuser@example.com",
+      "fakepassword",
+    );
+
+    expect(fakeJWT.sign).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ expiresIn: "1h" }),
+    );
+  });
+
+  test("login signs JWT with correct payload including role", async () => {
+    const fakePrisma = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: 42,
+          username: "adminuser",
+          email: "admin@example.com",
+          password: "hashedpassword",
+          role: "ADMIN",
+        }),
+      },
+    };
+    const fakeBcrypt = { compare: vi.fn().mockResolvedValue(true) };
+    const fakeJWT = { sign: vi.fn().mockReturnValue("fakeToken") };
+
+    await authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
+      "admin@example.com",
+      "fakepassword",
+    );
+
+    expect(fakeJWT.sign).toHaveBeenCalledWith(
+      { id: 42, username: "adminuser", role: "ADMIN" },
+      "test-secret",
+      expect.anything(),
+    );
+  });
 });

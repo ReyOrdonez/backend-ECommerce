@@ -10,6 +10,16 @@ const fakeUser = {
 };
 
 describe("user services", () => {
+  test("getUsersService returns empty array when no users exist", async () => {
+    const fakePrisma = {
+      user: {
+        findMany: vi.fn().mockResolvedValue([]),
+      },
+    };
+    const result = await userServices(fakePrisma as any, {} as any).getUsersService();
+    expect(result).toEqual([]);
+  });
+
   test("getUsers service return all users with no password", async () => {
     const fakePrisma = {
       user: {
@@ -227,6 +237,21 @@ describe("user services", () => {
       }),
     );
   });
+  test("updateUser does not call bcrypt.hash when password is not in update data", async () => {
+    const fakePrisma = {
+      user: {
+        update: vi.fn().mockResolvedValue({ id: 1, username: "fakeuser" }),
+      },
+    };
+    const fakeBcrypt = { hash: vi.fn() };
+
+    await userServices(fakePrisma as any, fakeBcrypt as any).updateUserService(1, {
+      username: "newUsername",
+    });
+
+    expect(fakeBcrypt.hash).not.toHaveBeenCalled();
+  });
+
   test("updateUser throws an NotFoundError if user doesnt exist", async () => {
     const fakePrisma = {
       user: {

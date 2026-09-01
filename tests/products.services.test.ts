@@ -20,6 +20,18 @@ const fakeCreateInput = {
 };
 
 describe("product services", () => {
+  test("getProductsService returns empty array when no products exist", async () => {
+    const fakePrisma = {
+      product: {
+        findMany: vi.fn().mockResolvedValue([]),
+      },
+    };
+
+    const result = await productServices(fakePrisma as any).getProductsService();
+
+    expect(result).toEqual([]);
+  });
+
   test("getProductsService returns all products", async () => {
     const fakePrisma = {
       product: {
@@ -73,6 +85,22 @@ describe("product services", () => {
     ).createProductService(fakeCreateInput);
 
     expect(result).toEqual(fakeProduct);
+  });
+
+  test("createProductService throws NotFoundError when categoryId does not exist", async () => {
+    const fakePrisma = {
+      product: {
+        create: vi.fn().mockRejectedValue(
+          Object.assign(new Error("Foreign key constraint failed"), {
+            code: "P2003",
+          }),
+        ),
+      },
+    };
+
+    await expect(
+      productServices(fakePrisma as any).createProductService(fakeCreateInput),
+    ).rejects.toThrow(NotFoundError);
   });
 
   test("removeProductService removes and returns the product", async () => {

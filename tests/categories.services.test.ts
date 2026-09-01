@@ -1,6 +1,10 @@
 import { expect, test, describe, vi } from "vitest";
 import { categoryServices } from "../src/services/categories.services.js";
-import { NotFoundError } from "../src/errors/errors.classes.js";
+import {
+  NotFoundError,
+  AlreadyExistsError,
+  BadRequestError,
+} from "../src/errors/errors.classes.js";
 
 // FAKE CATEGORY DATA
 const fakeCategory = {
@@ -73,6 +77,7 @@ describe("category services", () => {
   test("createCategoryService creates and returns a new category", async () => {
     const fakePrisma = {
       category: {
+        findUnique: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue(fakeCategory),
       },
     };
@@ -85,10 +90,25 @@ describe("category services", () => {
     expect(fakePrisma.category.create).toHaveBeenCalled();
   });
 
-  test("removeCategoryService removes and returns the category", async () => {
+  test("createCategoryService throws AlreadyExistsError when name already exists", async () => {
     const fakePrisma = {
       category: {
         findUnique: vi.fn().mockResolvedValue(fakeCategory),
+        create: vi.fn(),
+      },
+    };
+
+    await expect(
+      categoryServices(fakePrisma as any).createCategoryService(fakeCreateInput),
+    ).rejects.toThrow(AlreadyExistsError);
+
+    expect(fakePrisma.category.create).not.toHaveBeenCalled();
+  });
+
+  test("removeCategoryService removes and returns the category", async () => {
+    const fakePrisma = {
+      category: {
+        findUnique: vi.fn().mockResolvedValue({ ...fakeCategory, products: [] }),
         delete: vi.fn().mockResolvedValue(fakeCategory),
       },
     };
@@ -100,6 +120,24 @@ describe("category services", () => {
     expect(fakePrisma.category.findUnique).toHaveBeenCalled();
     expect(fakePrisma.category.delete).toHaveBeenCalled();
     expect(result).toEqual(fakeCategory);
+  });
+
+  test("removeCategoryService throws BadRequestError when category has associated products", async () => {
+    const fakePrisma = {
+      category: {
+        findUnique: vi.fn().mockResolvedValue({
+          ...fakeCategory,
+          products: [{ id: 1 }],
+        }),
+        delete: vi.fn(),
+      },
+    };
+
+    await expect(
+      categoryServices(fakePrisma as any).removeCategoryService(1),
+    ).rejects.toThrow(BadRequestError);
+
+    expect(fakePrisma.category.delete).not.toHaveBeenCalled();
   });
 
   test("removeCategoryService throws NotFoundError when category does not exist and does not call delete", async () => {
@@ -144,5 +182,21 @@ describe("category services", () => {
         name: "Updated",
       }),
     ).rejects.toThrow(NotFoundError);
+  });
+
+  test("updateCategoryService throws AlreadyExistsError when name already exists", async () => {
+    const fakePrisma = {
+      category: {
+        update: vi.fn().mockRejectedValue(
+          Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
+        ),
+      },
+    };
+
+    await expect(
+      categoryServices(fakePrisma as any).updateCategoryService(1, {
+        name: "Existing Category",
+      }),
+    ).rejects.toThrow(AlreadyExistsError);
   });
 });
