@@ -16,8 +16,9 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     req.user = data;
 
     return next();
-  } catch (error) {
+  } catch (e) {
     res.status(401).json({ mensaje: "Unauthorized" });
+    next(e);
   }
 };
 
