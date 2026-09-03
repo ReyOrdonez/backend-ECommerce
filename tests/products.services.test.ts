@@ -2,6 +2,8 @@ import { expect, test, describe, vi } from "vitest";
 import { productServices } from "../src/services/products.services.js";
 import { NotFoundError } from "../src/errors/errors.classes.js";
 
+import { prisma } from "../src/lib/prisma.js";
+
 // FAKE PRODUCT DATA
 const fakeProduct = {
   id: 1,
@@ -27,7 +29,9 @@ describe("product services", () => {
       },
     };
 
-    const result = await productServices(fakePrisma as any).getProductsService();
+    const result = await productServices(
+      fakePrisma as unknown as typeof prisma,
+    ).getProductsService();
 
     expect(result).toEqual([]);
   });
@@ -40,7 +44,7 @@ describe("product services", () => {
     };
 
     const result = await productServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).getProductsService();
 
     expect(result).toEqual([fakeProduct]);
@@ -55,7 +59,7 @@ describe("product services", () => {
     };
 
     const result = await productServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).getProductByIdService(1);
 
     expect(result).toEqual(fakeProduct);
@@ -69,7 +73,9 @@ describe("product services", () => {
     };
 
     await expect(
-      productServices(fakePrisma as any).getProductByIdService(1),
+      productServices(
+        fakePrisma as unknown as typeof prisma,
+      ).getProductByIdService(1),
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -81,7 +87,7 @@ describe("product services", () => {
     };
 
     const result = await productServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).createProductService(fakeCreateInput);
 
     expect(result).toEqual(fakeProduct);
@@ -99,7 +105,9 @@ describe("product services", () => {
     };
 
     await expect(
-      productServices(fakePrisma as any).createProductService(fakeCreateInput),
+      productServices(
+        fakePrisma as unknown as typeof prisma,
+      ).createProductService(fakeCreateInput),
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -112,7 +120,7 @@ describe("product services", () => {
     };
 
     const result = await productServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).removeProductService(1);
 
     expect(fakePrisma.product.findUnique).toHaveBeenCalled();
@@ -129,7 +137,9 @@ describe("product services", () => {
     };
 
     await expect(
-      productServices(fakePrisma as any).removeProductService(1),
+      productServices(
+        fakePrisma as unknown as typeof prisma,
+      ).removeProductService(1),
     ).rejects.toThrow(NotFoundError);
 
     expect(fakePrisma.product.delete).not.toHaveBeenCalled();
@@ -143,7 +153,7 @@ describe("product services", () => {
     };
 
     const result = await productServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).updateProductService(1, { name: "Updated" });
 
     expect(fakePrisma.product.update).toHaveBeenCalled();
@@ -158,7 +168,9 @@ describe("product services", () => {
     };
 
     await expect(
-      productServices(fakePrisma as any).updateProductService(1, {
+      productServices(
+        fakePrisma as unknown as typeof prisma,
+      ).updateProductService(1, {
         name: "Updated",
       }),
     ).rejects.toThrow(NotFoundError);

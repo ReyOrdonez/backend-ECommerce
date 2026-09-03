@@ -1,6 +1,9 @@
 import { expect, test, describe, vi } from "vitest";
 import { userServices } from "../src/services/users.services.js";
-import { NotFoundError, AlreadyExistsError } from "../src/errors/errors.classes.js";
+import {
+  NotFoundError,
+  AlreadyExistsError,
+} from "../src/errors/errors.classes.js";
 
 //FAKE USER DATA
 const fakeUser = {
@@ -9,6 +12,10 @@ const fakeUser = {
   password: "fakepassword",
 };
 
+import bcrypt from "bcrypt";
+
+import { prisma } from "../src/lib/prisma.js";
+
 describe("user services", () => {
   test("getUsersService returns empty array when no users exist", async () => {
     const fakePrisma = {
@@ -16,7 +23,10 @@ describe("user services", () => {
         findMany: vi.fn().mockResolvedValue([]),
       },
     };
-    const result = await userServices(fakePrisma as any, {} as any).getUsersService();
+    const result = await userServices(
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
+    ).getUsersService();
     expect(result).toEqual([]);
   });
 
@@ -31,8 +41,8 @@ describe("user services", () => {
       },
     };
     const result = await userServices(
-      fakePrisma as any,
-      {} as any,
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
     ).getUsersService();
     //EXPECT
     expect(result).toEqual([
@@ -56,8 +66,8 @@ describe("user services", () => {
       },
     };
     const result = await userServices(
-      fakePrisma as any,
-      {} as any,
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
     ).getUserByIdService(1);
 
     //expect
@@ -77,7 +87,10 @@ describe("user services", () => {
         findUnique: vi.fn().mockResolvedValue(null),
       },
     };
-    const users = userServices(fakePrisma as any, {} as any);
+    const users = userServices(
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
+    );
 
     //EXPECT
     await expect(users.getUserByIdService(1)).rejects.toThrow(NotFoundError);
@@ -91,13 +104,15 @@ describe("user services", () => {
           .mockResolvedValue({ id: "fakeId", username: "fake user" }),
         create: vi.fn(),
       },
-    };
+    } as unknown as typeof prisma;
+
     //MOCK BCRYPT
     const fakeBcrypt = {
       hash: vi.fn().mockResolvedValue("hashedPassword"),
-    };
+    } as unknown as typeof bcrypt;
+
     //INITIALIZE USERS
-    const users = userServices(fakePrisma as any, fakeBcrypt as any);
+    const users = userServices(fakePrisma, fakeBcrypt);
 
     //EXPETC
     await expect(users.createUserService(fakeUser)).rejects.toThrow(
@@ -120,7 +135,10 @@ describe("user services", () => {
     };
 
     //INITIALIZE USERS
-    const users = userServices(fakePrisma as any, fakeBcrypt as any);
+    const users = userServices(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+    );
     //SERVICE CALL
     const result = await users.createUserService(fakeUser);
     //EXPECTS
@@ -150,8 +168,8 @@ describe("user services", () => {
     };
 
     const result = await userServices(
-      fakePrisma as any,
-      {} as any,
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
     ).removeUserService(1);
 
     //EXPECT
@@ -177,7 +195,10 @@ describe("user services", () => {
       hash: vi.fn().mockResolvedValue("hashedPassword"),
     };
     //INITIALIZE USER SERVICES
-    const users = userServices(fakePrisma as any, fakeBcrypt as any);
+    const users = userServices(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+    );
 
     //EXPECT
     await expect(users.removeUserService(1)).rejects.toThrow(NotFoundError);
@@ -194,8 +215,8 @@ describe("user services", () => {
       },
     };
     const result = await userServices(
-      fakePrisma as any,
-      {} as any,
+      fakePrisma as unknown as typeof prisma,
+      {} as unknown as typeof bcrypt,
     ).updateUserService(1, {});
 
     //EXPECT
@@ -220,9 +241,9 @@ describe("user services", () => {
     const fakeBcrypt = {
       hash: vi.fn().mockResolvedValue("hashedPassword"),
     };
-    const result = await userServices(
-      fakePrisma as any,
-      fakeBcrypt as any,
+    const _result = await userServices(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
     ).updateUserService(1, {
       username: "newFakeUsername",
       password: "newFakePassword",
@@ -245,7 +266,10 @@ describe("user services", () => {
     };
     const fakeBcrypt = { hash: vi.fn() };
 
-    await userServices(fakePrisma as any, fakeBcrypt as any).updateUserService(1, {
+    await userServices(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+    ).updateUserService(1, {
       username: "newUsername",
     });
 
@@ -261,7 +285,10 @@ describe("user services", () => {
     const fakeBcrypt = {
       hash: vi.fn(),
     };
-    const service = userServices(fakePrisma as any, fakeBcrypt as any);
+    const service = userServices(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+    );
     const promise = service.updateUserService(1, {
       username: "fakeUser",
     });

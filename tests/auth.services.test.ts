@@ -3,6 +3,12 @@ import { expect, test, describe, vi, beforeEach } from "vitest";
 import { authService } from "../src/services/auth.services.js";
 import { IncorrectPasswordOrEmail } from "../src/errors/errors.classes.js";
 
+import bcrypt from "bcrypt";
+
+import { prisma } from "../src/lib/prisma.js";
+
+import jwt from "jsonwebtoken";
+
 describe("auth services", () => {
   beforeEach(() => {
     process.env.SECRET_JWT_KEY = "test-secret";
@@ -28,9 +34,9 @@ describe("auth services", () => {
     };
 
     const result = await authService(
-      fakePrisma as any,
-      fakeBcrypt as any,
-      fakeJWT as any,
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+      fakeJWT as unknown as typeof jwt,
     ).login("fakeuser@example.com", "fakepassword");
 
     expect(result).toEqual({
@@ -51,10 +57,11 @@ describe("auth services", () => {
     const fakeJWT = { sign: vi.fn() };
 
     await expect(
-      authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
-        "notexist@example.com",
-        "anypassword",
-      ),
+      authService(
+        fakePrisma as unknown as typeof prisma,
+        fakeBcrypt as unknown as typeof bcrypt,
+        fakeJWT as unknown as typeof jwt,
+      ).login("notexist@example.com", "anypassword"),
     ).rejects.toThrow(IncorrectPasswordOrEmail);
 
     expect(fakeBcrypt.compare).not.toHaveBeenCalled();
@@ -79,10 +86,11 @@ describe("auth services", () => {
     const fakeJWT = { sign: vi.fn() };
 
     await expect(
-      authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
-        "fakeuser@example.com",
-        "wrongpassword",
-      ),
+      authService(
+        fakePrisma as unknown as typeof prisma,
+        fakeBcrypt as unknown as typeof bcrypt,
+        fakeJWT as unknown as typeof jwt,
+      ).login("fakeuser@example.com", "wrongpassword"),
     ).rejects.toThrow(IncorrectPasswordOrEmail);
 
     expect(fakeJWT.sign).not.toHaveBeenCalled();
@@ -108,10 +116,11 @@ describe("auth services", () => {
     const fakeJWT = { sign: vi.fn() };
 
     await expect(
-      authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
-        "fakeuser@example.com",
-        "fakepassword",
-      ),
+      authService(
+        fakePrisma as unknown as typeof prisma,
+        fakeBcrypt as unknown as typeof bcrypt,
+        fakeJWT as unknown as typeof jwt,
+      ).login("fakeuser@example.com", "fakepassword"),
     ).rejects.toThrow("SECRET_JWT_KEY is undefined");
 
     expect(fakeJWT.sign).not.toHaveBeenCalled();
@@ -139,9 +148,9 @@ describe("auth services", () => {
     };
 
     await authService(
-      fakePrisma as any,
-      fakeBcrypt as any,
-      fakeJWT as any,
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+      fakeJWT as unknown as typeof jwt,
     ).login("fakeuser@example.com", "fakepassword");
 
     expect(fakeJWT.sign).toHaveBeenCalledWith(
@@ -170,10 +179,11 @@ describe("auth services", () => {
     const fakeBcrypt = { compare: vi.fn().mockResolvedValue(true) };
     const fakeJWT = { sign: vi.fn().mockReturnValue("fakeToken") };
 
-    await authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
-      "fakeuser@example.com",
-      "fakepassword",
-    );
+    await authService(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+      fakeJWT as unknown as typeof jwt,
+    ).login("fakeuser@example.com", "fakepassword");
 
     expect(fakeJWT.sign).toHaveBeenCalledWith(
       expect.anything(),
@@ -197,10 +207,11 @@ describe("auth services", () => {
     const fakeBcrypt = { compare: vi.fn().mockResolvedValue(true) };
     const fakeJWT = { sign: vi.fn().mockReturnValue("fakeToken") };
 
-    await authService(fakePrisma as any, fakeBcrypt as any, fakeJWT as any).login(
-      "admin@example.com",
-      "fakepassword",
-    );
+    await authService(
+      fakePrisma as unknown as typeof prisma,
+      fakeBcrypt as unknown as typeof bcrypt,
+      fakeJWT as unknown as typeof jwt,
+    ).login("admin@example.com", "fakepassword");
 
     expect(fakeJWT.sign).toHaveBeenCalledWith(
       { id: 42, username: "adminuser", role: "ADMIN" },

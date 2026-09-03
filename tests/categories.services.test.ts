@@ -6,6 +6,8 @@ import {
   BadRequestError,
 } from "../src/errors/errors.classes.js";
 
+import { prisma } from "../src/lib/prisma.js";
+
 // FAKE CATEGORY DATA
 const fakeCategory = {
   id: 1,
@@ -25,7 +27,7 @@ describe("category services", () => {
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).getCategoriesService();
 
     expect(result).toEqual([fakeCategory]);
@@ -40,7 +42,7 @@ describe("category services", () => {
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).getCategoriesService();
 
     expect(result).toEqual([]);
@@ -55,7 +57,7 @@ describe("category services", () => {
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).getCategoryByIdService(1);
 
     expect(result).toEqual(fakeCategory);
@@ -70,7 +72,9 @@ describe("category services", () => {
     };
 
     await expect(
-      categoryServices(fakePrisma as any).getCategoryByIdService(1),
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).getCategoryByIdService(1),
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -83,7 +87,7 @@ describe("category services", () => {
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).createCategoryService(fakeCreateInput);
 
     expect(result).toEqual(fakeCategory);
@@ -99,7 +103,9 @@ describe("category services", () => {
     };
 
     await expect(
-      categoryServices(fakePrisma as any).createCategoryService(fakeCreateInput),
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).createCategoryService(fakeCreateInput),
     ).rejects.toThrow(AlreadyExistsError);
 
     expect(fakePrisma.category.create).not.toHaveBeenCalled();
@@ -108,13 +114,15 @@ describe("category services", () => {
   test("removeCategoryService removes and returns the category", async () => {
     const fakePrisma = {
       category: {
-        findUnique: vi.fn().mockResolvedValue({ ...fakeCategory, products: [] }),
+        findUnique: vi
+          .fn()
+          .mockResolvedValue({ ...fakeCategory, products: [] }),
         delete: vi.fn().mockResolvedValue(fakeCategory),
       },
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).removeCategoryService(1);
 
     expect(fakePrisma.category.findUnique).toHaveBeenCalled();
@@ -134,7 +142,9 @@ describe("category services", () => {
     };
 
     await expect(
-      categoryServices(fakePrisma as any).removeCategoryService(1),
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).removeCategoryService(1),
     ).rejects.toThrow(BadRequestError);
 
     expect(fakePrisma.category.delete).not.toHaveBeenCalled();
@@ -149,7 +159,9 @@ describe("category services", () => {
     };
 
     await expect(
-      categoryServices(fakePrisma as any).removeCategoryService(1),
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).removeCategoryService(1),
     ).rejects.toThrow(NotFoundError);
 
     expect(fakePrisma.category.delete).not.toHaveBeenCalled();
@@ -163,7 +175,7 @@ describe("category services", () => {
     };
 
     const result = await categoryServices(
-      fakePrisma as any,
+      fakePrisma as unknown as typeof prisma,
     ).updateCategoryService(1, { name: "Updated" });
 
     expect(fakePrisma.category.update).toHaveBeenCalled();
@@ -178,7 +190,9 @@ describe("category services", () => {
     };
 
     await expect(
-      categoryServices(fakePrisma as any).updateCategoryService(1, {
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).updateCategoryService(1, {
         name: "Updated",
       }),
     ).rejects.toThrow(NotFoundError);
@@ -188,13 +202,17 @@ describe("category services", () => {
     const fakePrisma = {
       category: {
         update: vi.fn().mockRejectedValue(
-          Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
+          Object.assign(new Error("Unique constraint failed"), {
+            code: "P2002",
+          }),
         ),
       },
     };
 
     await expect(
-      categoryServices(fakePrisma as any).updateCategoryService(1, {
+      categoryServices(
+        fakePrisma as unknown as typeof prisma,
+      ).updateCategoryService(1, {
         name: "Existing Category",
       }),
     ).rejects.toThrow(AlreadyExistsError);
