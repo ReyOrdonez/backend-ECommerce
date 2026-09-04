@@ -6,7 +6,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   if (!token) {
     return res.status(403).json({ mensaje: "Token required" });
   }
-  req.user = null;
   try {
     const key = process.env.SECRET_JWT_KEY;
     if (!key) {

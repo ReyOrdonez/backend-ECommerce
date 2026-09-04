@@ -8,6 +8,6 @@ interface User {
 
 declare namespace Express {
   export interface Request {
-    user: User | null;
+    user?: User;
   }
 }
