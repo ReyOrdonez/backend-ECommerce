@@ -34,9 +34,11 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = createCategoryInput.parse(req.body);
-    const newCategory =
-      await categoryServicesModule.createCategoryService(data);
-    return res.status(201).json(newCategory);
+    const result = categoryOutput.parse(
+      await categoryServicesModule.createCategoryService(data),
+    );
+
+    return res.status(201).json(result);
   } catch (error) {
     next(error);
   }

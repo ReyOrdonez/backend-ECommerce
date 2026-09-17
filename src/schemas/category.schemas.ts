@@ -13,3 +13,4 @@ export const categoryOutput = z.object({
 
 export type CreateCategoryInput = z.infer<typeof createCategoryInput>;
 export type UpdateCategoryInput = z.infer<typeof updateCategoryInput>;
+export type CategoryOutPut = z.infer<typeof categoryOutput>;
