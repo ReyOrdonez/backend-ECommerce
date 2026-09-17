@@ -170,6 +170,10 @@ describe("category services", () => {
   test("updateCategoryService updates and returns the category", async () => {
     const fakePrisma = {
       category: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValueOnce(fakeCategory)
+          .mockResolvedValueOnce(null),
         update: vi.fn().mockResolvedValue({ ...fakeCategory, name: "Updated" }),
       },
     };
@@ -185,7 +189,8 @@ describe("category services", () => {
   test("updateCategoryService throws NotFoundError when category does not exist", async () => {
     const fakePrisma = {
       category: {
-        update: vi.fn().mockRejectedValue(new Error("not found")),
+        update: vi.fn(),
+        findUnique: vi.fn(),
       },
     };
 
@@ -201,11 +206,8 @@ describe("category services", () => {
   test("updateCategoryService throws AlreadyExistsError when name already exists", async () => {
     const fakePrisma = {
       category: {
-        update: vi.fn().mockRejectedValue(
-          Object.assign(new Error("Unique constraint failed"), {
-            code: "P2002",
-          }),
-        ),
+        update: vi.fn(),
+        findUnique: vi.fn().mockResolvedValue(fakeCategory),
       },
     };
 
@@ -213,7 +215,7 @@ describe("category services", () => {
       categoryServices(
         fakePrisma as unknown as typeof prisma,
       ).updateCategoryService(1, {
-        name: "Existing Category",
+        name: "Fake Category",
       }),
     ).rejects.toThrow(AlreadyExistsError);
   });
