@@ -1,8 +1,10 @@
-# E-Commerce Backend API (User & Authentication Module)
+# E-Commerce Backend API
 
 Backend API developed using a layered architecture, focused on separation of responsibilities and testability.
 
 Implements a complete user management and authentication module based on secure credential verification, built with TypeScript and Prisma ORM on top of PostgreSQL.
+
+Docker implemented for best dev ops practices
 
 ---
 
@@ -16,6 +18,10 @@ routes/
 controllers/
 services/
 middlewares/
+errors/
+schemas/
+@types/
+test/
 
 ### Principles
 
@@ -37,6 +43,7 @@ middlewares/
 - Zod (data validation)
 - Bcrypt (password hashing)
 - Vitest (testing)
+- JWT (sessions)
 
 Infrastructure:
 
@@ -66,6 +73,22 @@ The login endpoint properly validates credentials and is prepared to evolve into
 - Get user by ID
 - Update user
 - Delete user
+
+### Category CRUD
+
+- Create category
+- Get all categories
+- Get category by id
+- Update category
+- Delete category
+
+### Product CRUD
+
+- Create product
+- Get all products
+- Get product by id
+- Update product
+- Delete product
 
 ### Login
 
@@ -129,10 +152,18 @@ npx prisma db seed
 
 npm run dev
 
+or
+
+docker compose -f docker-compose-dev.yml up
+
 # Production build
 
 npm run build
 npm start
+
+or
+
+docker compose up
 
 # Testing
 
