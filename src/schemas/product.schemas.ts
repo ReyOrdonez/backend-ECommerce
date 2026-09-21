@@ -18,7 +18,7 @@ export const productOutput = z.object({
   name: z.string(),
   price: z.number(),
   stock: z.number(),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
   categoryId: z.number(),
 });
 
