@@ -12,7 +12,8 @@ const categoryServicesModule = categoryServices(prisma);
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await categoryServicesModule.getCategoriesService();
-    return res.status(200).json(categories);
+    const result = categoryOutput.parse(categories);
+    return res.status(200).json(result);
   } catch (error) {
     next(error);
   }

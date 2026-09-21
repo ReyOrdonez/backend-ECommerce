@@ -19,7 +19,8 @@ const userServicesModule = userServices(prisma, bcrypt);
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await userServicesModule.getUsersService();
-    res.status(200).json(users);
+    const result = userOutput.array().parse(users);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -30,7 +31,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const user = await userServicesModule.getUserByIdService(Number(id));
-    const result = userOutput.parse(user); //validate output with zod schema before sending response
+    const result = userOutput.parse(user);
     return res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -46,7 +47,8 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
       email,
       password,
     });
-    return res.status(201).json(newUser);
+    const result = userOutput.parse(newUser);
+    return res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -57,7 +59,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const deletedUser = await userServicesModule.removeUserService(Number(id));
-    const result = userOutput.parse(deletedUser); //validate output with zod schema before sending response
+    const result = userOutput.parse(deletedUser);
     return res.status(200).json(`User ${result} successfully deleted`);
   } catch (error) {
     next(error);
@@ -73,7 +75,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
       Number(id),
       data,
     );
-    const result = userOutput.parse(updatedUser); //validate output with zod schema before sending response
+    const result = userOutput.parse(updatedUser);
     return res.status(200).json(result);
   } catch (error) {
     next(error);

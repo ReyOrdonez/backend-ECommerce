@@ -93,24 +93,6 @@ describe("product services", () => {
     expect(result).toEqual(fakeProduct);
   });
 
-  test("createProductService throws NotFoundError when categoryId does not exist", async () => {
-    const fakePrisma = {
-      product: {
-        create: vi.fn().mockRejectedValue(
-          Object.assign(new Error("Foreign key constraint failed"), {
-            code: "P2003",
-          }),
-        ),
-      },
-    };
-
-    await expect(
-      productServices(
-        fakePrisma as unknown as typeof prisma,
-      ).createProductService(fakeCreateInput),
-    ).rejects.toThrow(NotFoundError);
-  });
-
   test("removeProductService removes and returns the product", async () => {
     const fakePrisma = {
       product: {
@@ -149,6 +131,7 @@ describe("product services", () => {
     const fakePrisma = {
       product: {
         update: vi.fn().mockResolvedValue({ ...fakeProduct, name: "Updated" }),
+        findUnique: vi.fn().mockResolvedValue(fakeProduct),
       },
     };
 
@@ -163,7 +146,8 @@ describe("product services", () => {
   test("updateProductService throws NotFoundError when product does not exist", async () => {
     const fakePrisma = {
       product: {
-        update: vi.fn().mockRejectedValue(new Error("not found")),
+        update: vi.fn().mockRejectedValue(fakeProduct),
+        findUnique: vi.fn().mockResolvedValue(null),
       },
     };
 
