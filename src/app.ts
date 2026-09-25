@@ -1,5 +1,7 @@
 //EXPRESS
 import express from "express";
+import cors, { CorsOptions } from "cors";
+import dotenv from "dotenv";
 
 //ROUTES
 import {
@@ -18,7 +20,16 @@ import cookieParser from "cookie-parser";
 import verifyToken from "./middlewares/tokenVerification.middleware.js";
 import errorHandler from "./middlewares/errorHandler.middleware.js";
 
+dotenv.config();
 const app = express();
+
+const corsOptions: CorsOptions = {
+  origin: process.env.FRONTEND_URL,
+  methods: "*", // Permite todos los métodos HTTP
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 

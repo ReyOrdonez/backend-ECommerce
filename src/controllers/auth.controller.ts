@@ -22,7 +22,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       .status(200)
       .cookie("access_token", result.token, {
         httpOnly: true,
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
         maxAge: maxAge, //1 hour
       })
       .json({
