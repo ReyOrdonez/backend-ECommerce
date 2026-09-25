@@ -18,11 +18,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = userLogin.parse(req.body);
     const result = await authServicesModule.login(email, password);
     const maxAge = Number(process.env.COOKIE_MAX_AGE) || 1000 * 60 * 60;
+    const isProduction = process.env.NODE_ENV === "production";
     res
       .status(200)
       .cookie("access_token", result.token, {
         httpOnly: true,
-        secure: true,
+        secure: isProduction,
         sameSite: "none",
         maxAge: maxAge, //1 hour
       })
