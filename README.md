@@ -12,16 +12,19 @@ Docker implemented for best dev ops practices
 
 The application follows a modular approach based on MVC + service layer:
 
-server/
-app/
-routes/
-controllers/
-services/
-middlewares/
-errors/
-schemas/
-@types/
+```text
+src/
+  ├── @types/
+  ├── routes/
+  ├── controllers/
+  ├── services/
+  ├── middlewares/
+  ├── errors/
+  ├── schemas/
+  ├── app.ts
+  └── server.ts
 test/
+```
 
 ### Principles
 
@@ -59,10 +62,7 @@ Infrastructure:
 - Structured validation with Zod
 - Unique email constraint
 - Explicit exclusion of the `password` field in all responses (using Prisma `select`)
-
-The login endpoint properly validates credentials and is prepared to evolve into JWT-based authentication.
-
----
+- Secure login authentication returning a signed JWT access token upon successful credential verification.
 
 ## Implemented Features
 
@@ -78,7 +78,7 @@ The login endpoint properly validates credentials and is prepared to evolve into
 
 - Create category
 - Get all categories
-- Get category by id
+- Get category by ID
 - Update category
 - Delete category
 
@@ -86,7 +86,7 @@ The login endpoint properly validates credentials and is prepared to evolve into
 
 - Create product
 - Get all products
-- Get product by id
+- Get product by ID
 - Update product
 - Delete product
 
@@ -128,12 +128,14 @@ The project is deployed and production-ready:
 
 ```bash
 git clone https://github.com/ReyOrdonez/backend-ECommerce.git
-
+cd backend-ECommerce
 ```
 
 ### Install dependencies
 
+```bash
 npm install
+```
 
 ### Enviroment configuration
 
@@ -143,28 +145,40 @@ copy the .env.example file and set your local credentials (dataBaseUrl, secret k
 
 run the migrations to create tables in your database
 
+```bash
 npx prisma migrate dev --name init
 npx prisma db seed
+```
 
 ### Run your project
 
-# Development mode
+### Development mode
 
+```bash
 npm run dev
+```
 
-or
+### or
 
+```bash
 docker compose -f docker-compose-dev.yml up
+```
 
-# Production build
+### Production build
 
+```bash
 npm run build
 npm start
+```
 
-or
+### or
 
+```bash
 docker compose up
+```
 
-# Testing
+### Testing
 
+```bash
 npm test
+```
